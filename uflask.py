@@ -1,6 +1,7 @@
 import usocket as socket
 import time
 import tools
+import render_template 
 
 print('Usage: call run method with hostname and port as arguments')
 
@@ -38,8 +39,12 @@ def run(hostname, port):
                 if 'GET /home' in request:
                     response = f'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nok {counter}'
                     counter += 1
+                    client_socket.sendall(response.encode('utf-8'))
 
+                elif 'GET /index' in request:
+                    response = render_template.run('index.html')
                     client_socket.send(response.encode('utf-8'))
+
                 else:
                     client_socket.send('HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\nnot ok'.encode('utf-8'))
                 

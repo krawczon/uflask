@@ -1,4 +1,4 @@
-def render_template(*args, **kwargs):
+def run(*args, **kwargs):
 
     file = open(args[0], "r")
     content = file.read()
