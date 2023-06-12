@@ -35,6 +35,7 @@ def run(hostname, port):
                 request = str(request)
                 print(request)
                 print(counter)
+                print(clients)
 
                 if 'GET /home' in request:
                     response = f'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nok {counter}'
