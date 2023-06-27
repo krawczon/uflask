@@ -80,6 +80,15 @@ def parse_request_path(request):
 
 def make_response(*args, **kwargs):
     response = f'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n'
+    return response + args[0]
+
+
+def render_template(*args, **kwargs):
+    file = open(args[0], "r")
+    content = file.read()
+    formated_content = content.format(**kwargs)
+    file.close()
+    return formated_content
 
 
 @route('/test')
@@ -103,7 +112,7 @@ def home():
 def index():
     print(route_handlers)
     response = render_template.run('index.html')
-    return response
+    return make_response(render_template('index.html'))
 
 if __name__ == '__main__':
     run()
