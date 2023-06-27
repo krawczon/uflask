@@ -1,11 +1,20 @@
-import usocket as socket
+#import usocket as socket
+import socket
 import time
-import tools
+#import tools
 import render_template 
 
-print('Usage: call run method with hostname and port as arguments')
+# Dictionary to store route handlers
+route_handlers = {}
 
-def run(hostname, port):
+def route(path):
+    # Decorator to register a route handler
+    def decorator(func):
+        route_handlers[path] = func
+        return func
+    return decorator
+
+def run(hostname = '0.0.0.0', port = 5000):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((hostname, port))
     server_socket.listen(5)
@@ -33,22 +42,23 @@ def run(hostname, port):
                 # Receive data from the client
                 request = client_socket.recv(1024)
                 request = str(request)
-                print(request)
-                print(counter)
+#                print(request)
+#                print(counter)
                 print(clients)
 
-                if 'GET /home' in request:
-                    response = f'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nok {counter}'
-                    counter += 1
-                    client_socket.sendall(response.encode('utf-8'))
+                # Parse the request to extract the path
+                path = parse_request_path(request)
 
-                elif 'GET /index' in request:
-                    response = render_template.run('index.html')
+                # Find the corresponding route handler
+                handler = route_handlers.get(path)
+
+                if handler:
+                    # Call the route handler
+                    response = handler()
                     client_socket.send(response.encode('utf-8'))
-
                 else:
                     client_socket.send('HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\nnot ok'.encode('utf-8'))
-                
+
                 # Close the client connection
                 client_socket.close()
                 clients.remove(client_socket)
@@ -58,3 +68,42 @@ def run(hostname, port):
         # Add a small delay to prevent high CPU usage
         time.sleep(0.01)
 
+def parse_request_path(request):
+    # Parse the request to extract the path
+    lines = request.split('\r\n')
+    if lines:
+        # First line of the request should contain the method and path
+        parts = lines[0].split(' ')
+        if len(parts) >= 2:
+            return parts[1]
+    return ''
+
+def make_response(*args, **kwargs):
+    response = f'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n'
+
+
+@route('/test')
+def test():
+    print(route_handlers)
+    counter = 0
+    response = f'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nok {counter}'
+    counter += 1
+    return response + ' tescik'
+
+@route('/home')
+def home():
+    print(route_handlers)
+    counter = 0
+    response = f'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nok {counter} <h1>asdasd</h1>'
+    counter += 1
+    return response
+
+
+@route('/index')
+def index():
+    print(route_handlers)
+    response = render_template.run('index.html')
+    return response
+
+if __name__ == '__main__':
+    run()
