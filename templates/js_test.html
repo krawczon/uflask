@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Button Example</title>
+  <script>
+    function increaseValue() {
+      var label = document.getElementById("counter");
+      var currentValue = parseInt(label.innerText);
+      label.innerText = currentValue + 1;
+    }
+  </script>
+</head>
+<body>
+  <h1>Button Example</h1>
+  <p>Click the button to increase the value:</p>
+  <label id="counter">0</label>
+  <br>
+  <button onclick="increaseValue()">Click me</button>
+</body>
+</html>
+

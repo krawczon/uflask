@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Button Example</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    function increaseValue() {
+      var label = document.getElementById("counter");
+      var currentValue = parseInt(label.innerText);
+      label.innerText = currentValue + 1;
+
+      // Send the updated value to Flask
+      $.ajax({
+        type: "POST",
+        url: "/update",
+        data: { value: currentValue + 1,
+                value2: 'asd'},
+      });
+    }
+  </script>
+</head>
+<body>
+  <h1>{{ data }}</h1>
+  <a href="/about">about page</a>
+  <h1>Button Example</h1>
+  <p>Click the button to increase the value:</p>
+  <label id="counter">0</label>
+  <br>
+  <button onclick="increaseValue()">Click me</button>
+</body>
+</html>
+
