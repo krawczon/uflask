@@ -26,7 +26,8 @@ class uFlask():
     def route(self, path, methods = ['GET']):
         # Decorator to register a route handler
         def decorator(func):
-            self.route_handlers[path] = func
+#            self.route_handlers['routes'] = {path, func, methods}
+            self.route_handlers[path] = {'path': path,'func': func, 'methods': tuple(methods)}
             return func
         return decorator
 
@@ -40,7 +41,6 @@ class uFlask():
         self.quit = False
         self.run = True
         print(host, port)
-        print(self.route_handlers)
 
         while self.run:
             try:
@@ -65,9 +65,12 @@ class uFlask():
                     # Parse the request to extract the path
                     path = self.parse_request_path(request)
                     # Find the corresponding route handler
-                    handler = self.route_handlers.get(path)
+                    print(self.route_handlers)
+                    handler = self.route_handlers.get(path, {}).get('func')
+                    methods = self.route_handlers.get(path, {}).get('methods')
+                    
 
-                    if handler:
+                    if handler and self.request.method in methods:
                         # Call the route handler
                         response = handler()
                         client_socket.send(response.encode('utf-8'))
