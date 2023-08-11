@@ -1,7 +1,10 @@
 def parse_query_string(query_string):
-    data = {}
-    pairs = query_string.split()[-1].split('&')
-    for pair in pairs:
-        key, value = pair.split('=')
-        data[key] = value
-    return data
+    result = {}
+
+    matches = re.findall(r'(\w+)=(\w+)', query_string)
+    for key, value in matches:
+        result[key] = value
+    
+    print(result)
+    return result
+
