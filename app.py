@@ -1,5 +1,4 @@
-from uflask import uFlask, make_response, request
-from render_template import render_template
+from uflask import uFlask, make_response, request, render_template
 #import machine
 import time
 
@@ -15,7 +14,6 @@ def home():
 @app.route('/update', methods=['GET', 'POST'])
 def update():
     if request.method == 'POST':
-        session['data'] = request.form['value']
         return render_template('index.html')
     else:
         print('ELSE')
@@ -23,9 +21,8 @@ def update():
 
 @app.route('/about')
 def about():
+    data = 'example'
     print(request.form)
-    return render_template('about.html')
+    return render_template('about.html', data = data)
 
-
-if __name__ == '__main__':
-    app.run(port=5000)
+app.run(host = '0.0.0.0', port = 5000)
