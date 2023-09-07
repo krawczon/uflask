@@ -6,7 +6,6 @@ finally:
     import socket
 import time
 import select
-import re
 
 def make_response(*args, **kwargs):
     response = f'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n'
@@ -24,15 +23,22 @@ class Request():
     def __init__(self):
 
         self.method = ['None']
-        self.form = 1
+        self.form = {}
 
-def parse_query_string(query_string):
+def parse_query_string(string):
+    query_string = string.split()
+    query_string = query_string[-1]
     result = {}
 
-    matches = re.findall(r'(\w+)=(\w+)', query_string)
-    for key, value in matches:
-        result[key] = value
-    
+    pairs = query_string.split('&')
+    for pair in pairs:
+        key_value = pair.split('=')
+        if len(key_value) == 2:
+            key, value = key_value
+            result[key] = value
+        else:
+            print("Invalid key-value pair:", pair)
+
     print(result)
     return result
 
@@ -98,6 +104,7 @@ class uFlask():
                             print(request)
                             self.request.method = get_method(request)
                             self.request.form = parse_query_string(request)
+                            print(self.request.form)
 
                             # Parse the request to extract the path
                             path = self.parse_request_path(request)
